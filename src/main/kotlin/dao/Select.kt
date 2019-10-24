@@ -1,15 +1,10 @@
 package dao
 
-import dao.models.LogFile
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
+import dao.models.Operation
 import org.springframework.stereotype.Component
-import org.springframework.stereotype.Repository
 import java.sql.Connection
 import java.sql.PreparedStatement
 import java.sql.ResultSet
-import java.util.*
-import javax.sql.DataSource
 import kotlin.collections.ArrayList
 
 @Component
@@ -19,7 +14,7 @@ class Select {
         val preparedStatement: PreparedStatement = connect.prepareStatement(sql)
         val resultSet: ResultSet = preparedStatement.executeQuery()
     }
-    fun operations(connect: Connection): Collection<LogFile> {
+    fun operations(connect: Connection): Collection<Operation> {
         //V$LOGMNR_CONTENTS
         val sql: String = "select " +
                 "t.scn" +
@@ -37,10 +32,10 @@ class Select {
         val preparedStatement: PreparedStatement = connect.prepareStatement(sql)
         val resultSet: ResultSet = preparedStatement.executeQuery()
 
-        val logFileList = ArrayList<LogFile>()
+        val operationList = ArrayList<Operation>()
 
         while(resultSet.next()) {
-        logFileList.add(LogFile(
+            operationList.add(Operation(
                 resultSet.getLong("SCN"),
                 resultSet.getLong("START_SCN"),
                 resultSet.getString("START_TIMESTAMP"),
@@ -51,6 +46,6 @@ class Select {
                 resultSet.getString("XID")
         ))
     }
-        return logFileList
+        return operationList
     }
 }

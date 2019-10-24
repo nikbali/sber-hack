@@ -1,22 +1,14 @@
 package com.sberbank.hack.scheduler
 
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import com.sberbank.hack.dto.Transaction
-import com.sberbank.hack.filewriter.FileWrite
 import dao.Select
-import dao.models.LogFile
+import dao.models.Operation
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
-import java.sql.Connection
 import java.sql.DriverManager
-import java.util.*
 import java.util.concurrent.ConcurrentLinkedQueue
 import java.util.concurrent.TimeUnit
-import java.util.concurrent.ScheduledFuture
-import org.springframework.boot.autoconfigure.kafka.KafkaProperties.Producer
 import java.util.concurrent.Executors
-import java.util.concurrent.ScheduledExecutorService
 
 
 @Service
@@ -37,7 +29,7 @@ class ProduceExecuteService() {
     @Autowired
     lateinit var select: Select
 
-    private val logTaskQueue = ConcurrentLinkedQueue<LogFile>();
+    private val logTaskQueue = ConcurrentLinkedQueue<Operation>();
 
 
     fun execute() {
