@@ -10,13 +10,14 @@ import LoadingIndicator from '../common/LoadingIndicator';
 import { Layout, notification } from 'antd';
 import {DatabaseAPI} from "../api/api";
 import TransactionList from "../transaction/TransactionList";
+import DatabaseInformation from "../database/DatabaseInformation";
 const { Content } = Layout;
 
 class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      databaseInfo: null,
+      connectionString: null,
       isLoading: false
     };
 
@@ -29,14 +30,18 @@ class App extends Component {
   }
 
   getDatabaseInfo() {
+    let d;
+
     this.setState({
       isLoading: true
     });
     DatabaseAPI.getDatabaseInfo()
     .then(response => {
+      d = response.connectionString;
       this.setState({
-        databaseInfo: response,
+        connectionString:d,
         isLoading: false
+
       });
     }).catch(error => {
       debugger;
@@ -56,16 +61,11 @@ class App extends Component {
     }
     return (
         <Layout className="app-container">
-
           <AppHeader />
-
           <Content className="app-content">
             <div className="container">
-              <Switch>      
-                <Route exact path="/" 
-                  render={(props) => <TransactionList {...props} />}>
-                </Route>
-              </Switch>
+                  <DatabaseInformation connectionString={this.state.connectionString}/>
+                  <TransactionList />
             </div>
           </Content>
         </Layout>
