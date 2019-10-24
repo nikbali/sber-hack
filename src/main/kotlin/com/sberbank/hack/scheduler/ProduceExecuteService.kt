@@ -1,5 +1,7 @@
 package com.sberbank.hack.scheduler
 
+import com.sberbank.hack.dao.Select
+import com.sberbank.hack.dao.models.Operation
 import com.sberbank.hack.controllers.DatabaseScannerController
 import com.sberbank.hack.dao.Select
 import com.sberbank.hack.dao.models.LogFile
@@ -9,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import java.sql.DriverManager
 import java.util.concurrent.ConcurrentLinkedQueue
+import java.util.concurrent.TimeUnit
 import org.springframework.core.env.Environment
 import java.sql.Connection
 import java.util.concurrent.Callable
@@ -26,7 +29,7 @@ class ProduceExecuteService() {
     @Autowired
     lateinit var select: Select
 
-    private val logTaskQueue = ConcurrentLinkedQueue<LogFile>();
+    private val logTaskQueue = ConcurrentLinkedQueue<Operation>();
 
 
     fun execute() {
