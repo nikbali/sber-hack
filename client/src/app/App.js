@@ -23,17 +23,16 @@ class App extends Component {
       isLoading: false
     };
 
-
-    notification.config({
-      placement: 'topRight',
-      top: 70,
-      duration: 3,
-    });    
   }
 
-  getDatabaseInfo() {
-    let d;
+  openNotification = (type, text) => {
+    notification[type]({
+      message: 'Error',
+      description: text
+    });
+  };
 
+  getDatabaseInfo() {
     this.setState({
       isLoading: true
     });
@@ -48,10 +47,12 @@ class App extends Component {
 
       });
     }).catch(error => {
-      debugger;
+
       this.setState({
         isLoading: false
-      });  
+      });
+      debugger;
+      this.openNotification('error', error.message);
     });
   }
 
