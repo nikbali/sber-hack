@@ -46,7 +46,7 @@ class Select {
                    scn: Long,
                    rownum: Long): Collection<Operation> {
 
-        val sql: String = "select \n" +
+        val sql = "select \n" +
                 "t.scn\n" +
                 ",t.start_scn\n" +
                 ",t.start_timestamp\n" +
@@ -82,5 +82,14 @@ class Select {
             ))
         }
         return operationList
+    }
+
+    fun initialSCN(connect: Connection): Long {
+
+        val sql = "select v.current_scn from v\$database v"
+        val preparedStatement: PreparedStatement = connect.prepareStatement(sql)
+        val resultSet: ResultSet = preparedStatement.executeQuery()
+
+        return resultSet.getLong("CURRENT_SCN")
     }
 }

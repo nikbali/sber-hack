@@ -1,11 +1,11 @@
 package com.sberbank.hack.dao.models
 
 data class LogFile(
-        var recid: Long = 0,
-        var stamp: Long = 0,
-        var name: String = "",
-        var firstChange: Long = 0,
-        var nextChange: Long = 0,
-        var firstTime: Long = 0,
-        var nextTime: Long = 0
+        val recid: Long = 0,
+        val stamp: Long = 0,
+        val name: String = "",
+        val firstChange: Long = 0,
+        val nextChange: Long = 0,
+        val firstTime: Long = 0,
+        val nextTime: Long = 0
 )
