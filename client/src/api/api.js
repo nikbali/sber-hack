@@ -10,8 +10,16 @@ const instance = axios.create({
 
 export const DatabaseAPI = {
 
-    getDatabaseInfo() {
+    getDatabaseInfo : () => {
         return instance.get(`getDatabaseInfo`)
+            .then(response => {
+                debugger;
+                return response.data;
+            });
+    },
+
+    getLastTransactions : () => {
+        return instance.get(`getLastTransactions`)
             .then(response => {
                 debugger;
                 return response.data;
