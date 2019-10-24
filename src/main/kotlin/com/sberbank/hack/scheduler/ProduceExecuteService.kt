@@ -59,7 +59,7 @@ class ProduceExecuteService {
             while (true) {
                 if (isEnableProduce.get()) {
 
-                    logTaskQueue.addAll(select.operations(connection))
+                    logTaskQueue.addAll(select.operations(connection, 11, 10))
                     log.info("add Logs in Queue")
                 }
             }
