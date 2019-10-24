@@ -23,8 +23,8 @@ class Select {
                 ",a.next_time" +
                 "from v${'$'}archived_log a \n" +
                 "where trunc(a.first_time) = to_date(?)\n" +
-                "and rownum < 2\n" +
-                "order by a.first_time desc"
+                "order by a.first_time desc" +
+                "fetch first row only\n"
         val preparedStatement: PreparedStatement = connect.prepareStatement(sql)
         preparedStatement.setDate(1, logDate)
 
