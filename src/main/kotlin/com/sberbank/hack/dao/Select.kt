@@ -1,5 +1,6 @@
 package com.sberbank.hack.dao
 
+import com.sberbank.hack.dao.models.LogFile
 import com.sberbank.hack.dao.models.Operation
 import org.springframework.stereotype.Component
 import java.sql.Connection
@@ -9,7 +10,7 @@ import kotlin.collections.ArrayList
 
 @Component
 class Select {
-    fun logFiles(connect: Connection): Collection<Operation> {
+    fun logFiles(connect: Connection): Collection<LogFile> {
         val sql: String = "select\n" +
                 "a.recid\n" +
                 ",a.stamp\n" +
@@ -23,10 +24,10 @@ class Select {
         val preparedStatement: PreparedStatement = connect.prepareStatement(sql)
         val resultSet: ResultSet = preparedStatement.executeQuery()
 
-        val logFileList = ArrayList<Operation>()
+        val logFileList = ArrayList<LogFile>()
 
         while (resultSet.next()) {
-            logFileList.add(Operation(
+            logFileList.add(LogFile(
                     resultSet.getLong("RECID"),
                     resultSet.getLong("STAMP"),
                     resultSet.getString("NAME"),
