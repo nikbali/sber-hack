@@ -1,4 +1,4 @@
-package dao.models
+package com.sberbank.hack.dao.models
 
 data class Operation (
 

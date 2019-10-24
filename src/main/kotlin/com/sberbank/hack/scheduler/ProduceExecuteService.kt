@@ -1,7 +1,7 @@
 package com.sberbank.hack.scheduler
 
-import dao.Select
-import dao.models.Operation
+import com.sberbank.hack.dao.Select
+import com.sberbank.hack.dao.models.Operation
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service

@@ -1,7 +1,7 @@
 package com.sberbank.hack;
 
-import dao.Select;
-import dao.models.Operation;
+import com.sberbank.hack.dao.Select;
+import com.sberbank.hack.dao.models.Operation;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
