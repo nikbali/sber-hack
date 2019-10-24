@@ -8,6 +8,7 @@ import org.springframework.core.env.Environment
 import org.springframework.stereotype.Service
 import java.sql.Connection
 import java.sql.DriverManager
+import java.util.*
 import java.util.concurrent.ConcurrentLinkedQueue
 import java.util.concurrent.Executors
 import java.util.concurrent.atomic.AtomicBoolean
@@ -30,7 +31,7 @@ class ProduceExecuteService {
     @Autowired
     lateinit var select: Select
 
-    @Volatile private var  logTaskQueue = ConcurrentLinkedQueue<Operation>()
+    private val logTaskQueue = ConcurrentLinkedQueue<Operation>()
 
     fun enable() {
         isEnableProduce.set(true);
@@ -48,25 +49,25 @@ class ProduceExecuteService {
                 environment.getProperty("spring.datasource.username"),
                 environment.getProperty("spring.datasource.password"))
 
-        producer.submit(Producer(connection))
-        consumer.submit(Consumer(connection))
+        producer.submit(Producer(logTaskQueue, connection))
+        consumer.submit(Consumer(logTaskQueue, connection))
     }
 
-    internal inner class Producer(private val connection: Connection) : Runnable {
+    internal inner class Producer(val queue: Queue<Operation>, private val connection: Connection) : Runnable {
 
         override fun run() {
 
             while (true) {
                 if (isEnableProduce.get()) {
 
-                    logTaskQueue.addAll(select.operations(connection, 11, 10))
+                    queue.addAll(select.operations(connection, 11, 10))
                     log.info("add Logs in Queue")
                 }
             }
         }
     }
 
-    internal inner class Consumer(private val connection: Connection) : Runnable {
+    internal inner class Consumer(val queue: Queue<Operation>, private val connection: Connection) : Runnable {
 
         override fun run() {
 
@@ -81,8 +82,8 @@ class ProduceExecuteService {
 
                 } else {
 
-                    if(!logTaskQueue.isEmpty()){
-                        val operation: Operation = logTaskQueue.poll()
+                    if(!queue.isEmpty()){
+                        val operation: Operation = queue.poll()
                         log.info("Write to file" + operation.xid)
                     }
                 }
