@@ -56,11 +56,19 @@ class ProduceExecuteService {
 
         override fun run() {
 
+            var currentScn : Long = 0
+
             while (true) {
                 if (isEnableProduce.get()) {
 
-                    logTaskQueue.addAll(select.operations(connection, 11, 10))
-                    log.info("add Logs in Queue")
+                    val operations = select.operations(connection, currentScn, 10)
+
+                    if(operations.isNotEmpty()){
+
+                        logTaskQueue.addAll(operations)
+                        log.info("add Logs in Queue")
+                    }
+
                 }
             }
         }
