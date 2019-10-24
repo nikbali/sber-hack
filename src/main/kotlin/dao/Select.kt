@@ -3,6 +3,7 @@ package dao
 import dao.models.LogFile
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
+import org.springframework.stereotype.Component
 import org.springframework.stereotype.Repository
 import java.sql.Connection
 import java.sql.PreparedStatement
@@ -11,6 +12,7 @@ import java.util.*
 import javax.sql.DataSource
 import kotlin.collections.ArrayList
 
+@Component
 class Select {
     fun logFiles(connect: Connection) {
         val sql : String = "select * from v${'$'}archived_log where trunc(first_time) = to_date(sysdate)"

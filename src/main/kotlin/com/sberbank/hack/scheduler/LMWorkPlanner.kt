@@ -4,6 +4,7 @@ import java.util.*
 import java.util.concurrent.CompletableFuture
 
 class LMWorkPlanner(val queue: Queue<LMTask>) : Runnable {
+
     override fun run() {
         val task = queue.poll()
         if (task == null) {

@@ -11,6 +11,8 @@ public class HackApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(HackApplication.class, args);
+
+
 	}
 
 	@Bean

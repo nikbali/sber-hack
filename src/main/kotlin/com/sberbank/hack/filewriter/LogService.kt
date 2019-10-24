@@ -17,7 +17,6 @@ class LogService {
         val json = mapper.writeValueAsString(tx)
         tx.instructions.forEach{FileWrite.writeInstruction(it.sql, tx.txId)}
         FileWrite.writeLog(json)
-
         buffer.add(tx)
     }
 }

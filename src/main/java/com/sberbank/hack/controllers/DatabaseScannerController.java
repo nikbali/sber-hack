@@ -5,6 +5,7 @@ import com.sberbank.hack.dto.ErrorInfo;
 import com.sberbank.hack.dto.Instruction;
 import com.sberbank.hack.dto.Transaction;
 import com.sberbank.hack.filewriter.LogService;
+import com.sberbank.hack.scheduler.ProduceExecuteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,11 +26,13 @@ import java.util.Random;
 public class DatabaseScannerController {
 
     private final LogService logService;
+    private final ProduceExecuteService produceExecuteService;
     private final DataSource ds;
 
     @Autowired
-    public DatabaseScannerController(LogService logService, DataSource ds) {
+    public DatabaseScannerController(LogService logService, ProduceExecuteService produceExecuteService, DataSource ds) {
         this.logService = logService;
+        this.produceExecuteService = produceExecuteService;
         this.ds = ds;
     }
 
@@ -63,5 +66,10 @@ public class DatabaseScannerController {
                 new Instruction("1234", "4321", Instant.now()),
                 new Instruction("12345", "54321", Instant.now())
         )));
+    }
+
+    @GetMapping("/start")
+    public void start() {
+        produceExecuteService.execute();
     }
 }
