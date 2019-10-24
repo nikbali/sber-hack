@@ -39,6 +39,7 @@ class App extends Component {
         isLoading: false
       });
     }).catch(error => {
+      debugger;
       this.setState({
         isLoading: false
       });  
