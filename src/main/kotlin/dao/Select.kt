@@ -7,7 +7,9 @@ import org.springframework.stereotype.Repository
 import java.sql.Connection
 import java.sql.PreparedStatement
 import java.sql.ResultSet
+import java.util.*
 import javax.sql.DataSource
+import kotlin.collections.ArrayList
 
 class Select {
     fun logFiles(connect: Connection) {
@@ -15,9 +17,9 @@ class Select {
         val preparedStatement: PreparedStatement = connect.prepareStatement(sql)
         val resultSet: ResultSet = preparedStatement.executeQuery()
     }
-    fun operations(connect: Connection): LogFile {
+    fun operations(connect: Connection): Collection<LogFile> {
         //V$LOGMNR_CONTENTS
-        val sql : String = "select " +
+        val sql: String = "select " +
                 "t.scn" +
                 ",t.start_scn" +
                 ",t.start_timestamp" +
@@ -27,19 +29,26 @@ class Select {
                 ",t.info" +
                 ",t.redo_value" +
                 ",t.xid" +
-                " from data_lgmr t"
+                " from data_lgmr t" +
+                //TODO
+                " where rownum < 11"
         val preparedStatement: PreparedStatement = connect.prepareStatement(sql)
         val resultSet: ResultSet = preparedStatement.executeQuery()
 
-        return LogFile(
+        val logFileList = ArrayList<LogFile>()
+
+        while(resultSet.next()) {
+        logFileList.add(LogFile(
                 resultSet.getLong("SCN"),
                 resultSet.getLong("START_SCN"),
                 resultSet.getString("START_TIMESTAMP"),
-                resultSet.getString("xid"),
-                resultSet.getString("sql_redo"),
-                resultSet.getString("sql_undo"),
-                resultSet.getString("redo_value"),
-                resultSet.getString("xid")
-        )
+                resultSet.getString("XID"),
+                resultSet.getString("SQL_REDO"),
+                resultSet.getString("SQL_UNDO"),
+                resultSet.getString("REDO_VALUE"),
+                resultSet.getString("XID")
+        ))
+    }
+        return logFileList
     }
 }
