@@ -72,7 +72,17 @@ public class DatabaseScannerController {
 
     @GetMapping("/start")
     public ResponseEntity start() {
+
+        produceExecuteService.enable();
         produceExecuteService.execute();
         return ResponseEntity.ok().build();
     }
+
+    @GetMapping("/end")
+    public ResponseEntity end() {
+
+        produceExecuteService.disable();
+        return ResponseEntity.ok().build();
+    }
+
 }
