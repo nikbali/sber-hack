@@ -10,8 +10,8 @@ data class LogFile (
     var startTimestamp: String = "",
     var xid: String = "",
     var sqlRedo : String = "",
-    var sql_Undo : String = "",
-    var info : String? = "",
+    var sql_Undo : String?,
+    var info : String?,
     var dataLgmr: String = ""
 
 
