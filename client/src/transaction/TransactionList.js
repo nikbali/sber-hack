@@ -10,9 +10,9 @@ class TransactionList extends Component {
         super(props);
         this.state = {
             transactions: [],
-            isLoading: false
+            isLoading: false,
         };
-        this.loadTransactionList = this.loadTransactionList.bind(this);
+        this._isMounted = false;
     }
 
     loadTransactionList() {
@@ -23,13 +23,14 @@ class TransactionList extends Component {
 
             DatabaseAPI.getLastTransactions().then(response => {
 
-                const transactions = this.state.transactions.slice();
+                if(this._isMounted){
 
-                this.setState({
-                    transactions: transactions.concat(response.content),
-                    isLoading: false
+                    this.setState({
+                        transactions: response,
+                        isLoading: false
 
-                });
+                    });
+                }
 
             }).catch(error => {
 
@@ -37,114 +38,76 @@ class TransactionList extends Component {
                     isLoading: false
                 });
 
-                debugger;
                 this.openNotification('error', error.message);
             });
         }
 
 
     componentDidMount() {
+        this._isMounted = true;
         this.loadTransactionList();
+    }
+
+    componentWillUnmount() {
+        this._isMounted = false;
     }
 
 
     render() {
-        let testData = [
-            {
-                txId: 1,
-                instructions:[
-                    {
-                        sql: "String",
-                        undoSql: "String",
-                        ts: "Instant"
-                    },{
-                        sql: "String",
-                        undoSql: "String",
-                        ts: "Instant"
-                    }
-                ]
-            },{
-                txId: 2,
-                instructions:[
-                    {
-                        sql: "String",
-                        undoSql: "String",
-                        ts: "Instant"
-                    },{
-                        sql: "String",
-                        undoSql: "String",
-                        ts: "Instant"
-                    }
-                ]
-            },{
-                txId: 3,
-                instructions:[
-                    {
-                        sql: "String",
-                        undoSql: "String",
-                        ts: "Instant"
-                    },{
-                        sql: "String",
-                        undoSql: "String",
-                        ts: "Instant"
-                    }
-                ]
-            }
 
-        ];
-
-        let cnt = this.state.transactions.length;
-        if (true) {
+        let testData = this.state.transactions;
+        debugger;
+        if (testData === undefined || testData.length === 0) {
 
             return (
                 <div className="transaction-container">
-
-                    {
-                        testData.map(transaction => {
-                            return (
-                            <Card title={'Transaction Id: ' + transaction.txId}>
-                                <p
-                                    style={{
-                                        fontSize: 14,
-                                        color: 'rgba(0, 0, 0, 0.85)',
-                                        marginBottom: 10,
-                                        fontWeight: 500,
-                                    }}
-                                >
-                                    List instructions:
-                                </p>
-
-                                {
-                                    transaction.instructions.map(instruction => {
-                                        return (
-                                            <Card type="inner"
-                                                  title={instruction.ts}
-
-                                                  style={{
-                                                      marginBottom: 5,
-                                                  }}
-                                            >
-                                                <p>SQL: {instruction.sql}</p>
-                                                <p>Undo SQL: {instruction.undoSql}</p>
-                                            </Card>
-                                        );
-                                    })
-                                }
-
-                            </Card>
-                            )
-                        })
-                    }
-
+                    <div className="no-transaction-found">
+                        <span>No Transactions Found.</span>
+                    </div>
                 </div>
             );
 
         } else {
             return (
                 <div className="transaction-container">
-                    <div className="no-transaction-found">
-                        <span>No Transactions Found.</span>
-                    </div>
+
+                    {
+                        testData.map(transaction => {
+                            return (
+                                <Card title={'Transaction Id: ' + transaction.txId}>
+                                    <p
+                                        style={{
+                                            fontSize: 14,
+                                            color: 'rgba(0, 0, 0, 0.85)',
+                                            marginBottom: 10,
+                                            fontWeight: 500,
+                                        }}
+                                    >
+                                        List instructions:
+                                    </p>
+
+                                    {
+                                        transaction.instructions.map(instruction => {
+                                            return (
+                                                <Card type="inner"
+                                                      title={instruction.ts}
+
+                                                      style={{
+                                                          marginBottom: 5,
+                                                      }}
+                                                >
+                                                    <p>SQL: {instruction.sql}</p>
+                                                    <p>Undo SQL: {instruction.undoSql}</p>
+                                                </Card>
+                                            );
+                                        })
+                                    }
+
+                                </Card>
+                            )
+                        })
+                    }
+
                 </div>
             );
         }

@@ -17,6 +17,7 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      serverActive: false,
       connectionString: null,
       username: null,
       scanActive: false,
@@ -43,15 +44,14 @@ class App extends Component {
         connectionString: response.connectionString,
         username: response.username,
         scanActive: response.scanActive,
-        isLoading: false
-
+        isLoading: false,
+        serverActive: true
       });
     }).catch(error => {
 
       this.setState({
         isLoading: false
       });
-      debugger;
       this.openNotification('error', error.message);
     });
   }
@@ -75,7 +75,9 @@ class App extends Component {
                       username = {this.state.username}
                       scanActive = {this.state.scanActive}
                   />
-                  <TransactionList />
+                  <TransactionList
+                      serverActive = {this.state.serverActive}
+                  />
             </div>
           </Content>
         </Layout>
