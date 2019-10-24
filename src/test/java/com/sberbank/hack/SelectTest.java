@@ -23,7 +23,7 @@ public class SelectTest {
         Connection connection = null;
         try {
             connection = DriverManager.getConnection(url, "sergonas", "password");
-            Collection<Operation> operation = new Select().operations(connection);
+            Collection<Operation> operation = new Select().operations(connection, 1, 1);
             System.out.println(operation.size());
         } catch (SQLException e) {
             System.out.println("Connection Failed : " + e.getMessage());

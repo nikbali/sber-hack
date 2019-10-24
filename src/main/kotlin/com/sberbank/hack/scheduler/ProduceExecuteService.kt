@@ -8,7 +8,6 @@ import org.springframework.core.env.Environment
 import org.springframework.stereotype.Service
 import java.sql.Connection
 import java.sql.DriverManager
-import java.util.*
 import java.util.concurrent.ConcurrentLinkedQueue
 import java.util.concurrent.Executors
 import java.util.concurrent.atomic.AtomicBoolean
@@ -31,7 +30,8 @@ class ProduceExecuteService {
     @Autowired
     lateinit var select: Select
 
-    private val logTaskQueue = ConcurrentLinkedQueue<Operation>()
+    @Volatile
+    private var logTaskQueue = ConcurrentLinkedQueue<Operation>()
 
     fun enable() {
         isEnableProduce.set(true);
@@ -49,25 +49,24 @@ class ProduceExecuteService {
                 environment.getProperty("spring.datasource.username"),
                 environment.getProperty("spring.datasource.password"))
 
-        producer.submit(Producer(logTaskQueue, connection))
-        consumer.submit(Consumer(logTaskQueue, connection))
+        producer.submit(Producer(connection))
+        consumer.submit(Consumer(connection))
     }
 
-    internal inner class Producer(val queue: Queue<Operation>, private val connection: Connection) : Runnable {
+    internal inner class Producer(private val connection: Connection) : Runnable {
 
         override fun run() {
 
-            var currentScn : Long = 0
+            var currentScn: Long = 0
 
             while (true) {
                 if (isEnableProduce.get()) {
 
-                    queue.addAll(select.operations(connection, 11, 10))
-                    log.info("add Logs in Queue")
                     val operations = select.operations(connection, currentScn, 10)
 
-                    if(operations.isNotEmpty()){
-
+                    if (operations.isNotEmpty()) {
+                        val lastOperation: Operation? = getLastElement(operations)
+                        currentScn = lastOperation?.scn ?: currentScn
                         logTaskQueue.addAll(operations)
                         log.info("add Logs in Queue")
                     }
@@ -77,7 +76,7 @@ class ProduceExecuteService {
         }
     }
 
-    internal inner class Consumer(val queue: Queue<Operation>, private val connection: Connection) : Runnable {
+    internal inner class Consumer(private val connection: Connection) : Runnable {
 
         override fun run() {
 
@@ -92,14 +91,24 @@ class ProduceExecuteService {
 
                 } else {
 
-                    if(!queue.isEmpty()){
-                        val operation: Operation = queue.poll()
+                    if (!logTaskQueue.isEmpty()) {
+                        val operation: Operation = logTaskQueue.poll()
                         log.info("Write to file" + operation.xid)
                     }
                 }
 
             }
         }
+    }
+
+    fun <T> getLastElement(elements: Iterable<T>): T? {
+        var lastElement: T? = null
+
+        for (element in elements) {
+            lastElement = element
+        }
+
+        return lastElement
     }
 
 }
