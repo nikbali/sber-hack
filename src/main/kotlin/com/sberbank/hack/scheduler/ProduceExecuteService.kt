@@ -2,9 +2,6 @@ package com.sberbank.hack.scheduler
 
 import com.sberbank.hack.dao.Select
 import com.sberbank.hack.dao.models.Operation
-import com.sberbank.hack.controllers.DatabaseScannerController
-import com.sberbank.hack.dao.Select
-import com.sberbank.hack.dao.models.LogFile
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired

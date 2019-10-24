@@ -1,7 +1,6 @@
 package com.sberbank.hack;
 
 import com.sberbank.hack.dao.Select;
-import com.sberbank.hack.dao.models.LogFile;
 import com.sberbank.hack.dao.Select;
 import com.sberbank.hack.dao.models.Operation;
 import org.junit.jupiter.api.Test;
