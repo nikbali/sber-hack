@@ -9,7 +9,7 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 object FileWrite {
-    private const val logFolderName = "C:\\Work\\Log\\"
+    private val logFolderName = "." + File.separator + "target" + File.separator
     private const val logFileName = "file.log"
     private const val instructionFileName = "rpl.sql"
     private val dateFormatter = DateTimeFormatter.ofPattern("yy-MM-dd_HH-mm-ss")
