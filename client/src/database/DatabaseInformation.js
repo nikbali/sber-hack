@@ -10,16 +10,18 @@ class DatabaseInformation extends Component {
 
 
     render() {
-        let url = this.props.connectionString;
+        let connectionString = this.props.connectionString;
+        let username = this.props.username;
+        let scanActive = this.props.scanActive;
 
-        if (url) {
-
+        if (connectionString) {
+            debugger;
             return (
                 <div>
                     <Card title="Database Information" style={{width: 600, marginTop: 20}}>
-                        <p>URL: {url}</p>
-                        <p>User:</p>
-                        <p>Scanner enable:</p>
+                        <p>URL: {connectionString}</p>
+                        <p>User: {username}</p>
+                        <p>Scanner enable: {scanActive ? 'On' : 'Off'}</p>
                         <Button type="primary">Start Scan</Button>
                     </Card>
                 </div>

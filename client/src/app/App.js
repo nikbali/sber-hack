@@ -18,6 +18,8 @@ class App extends Component {
     super(props);
     this.state = {
       connectionString: null,
+      username: null,
+      scanActive: false,
       isLoading: false
     };
 
@@ -35,11 +37,13 @@ class App extends Component {
     this.setState({
       isLoading: true
     });
-    DatabaseAPI.getDatabaseInfo()
-    .then(response => {
-      d = response.connectionString;
+
+    DatabaseAPI.getDatabaseInfo().then(response => {
+
       this.setState({
-        connectionString:d,
+        connectionString: response.connectionString,
+        username: response.username,
+        scanActive: response.scanActive,
         isLoading: false
 
       });
@@ -59,12 +63,17 @@ class App extends Component {
     if(this.state.isLoading) {
       return <LoadingIndicator />
     }
+
     return (
         <Layout className="app-container">
           <AppHeader />
           <Content className="app-content">
             <div className="container">
-                  <DatabaseInformation connectionString={this.state.connectionString}/>
+                  <DatabaseInformation
+                      connectionString={this.state.connectionString}
+                      username = {this.state.username}
+                      scanActive = {this.state.scanActive}
+                  />
                   <TransactionList />
             </div>
           </Content>
