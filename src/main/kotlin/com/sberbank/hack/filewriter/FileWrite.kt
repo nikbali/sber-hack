@@ -4,4 +4,8 @@ object FileWrite {
     fun writeInstruction(instruction: String) {
 
     }
+
+    fun writeLog(logEntry: String) {
+
+    }
 }
