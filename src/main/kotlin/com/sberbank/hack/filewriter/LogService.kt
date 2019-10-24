@@ -9,6 +9,6 @@ class LogService {
     fun log(tx: Transaction) {
         val mapper = jacksonObjectMapper()
         val json = mapper.writeValueAsString(tx)
-
+        FileWrite.writeLog(json)
     }
 }
