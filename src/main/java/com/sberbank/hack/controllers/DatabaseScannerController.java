@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.sql.DataSource;
+import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
 import java.time.Instant;
 import java.util.Arrays;
@@ -28,7 +29,8 @@ public class DatabaseScannerController {
 
     @GetMapping("/getDatabaseInfo")
     public ResponseEntity getDatabaseInfo() throws SQLException {
-        return ResponseEntity.ok(new DbInfo(ds.getConnection().getMetaData().getURL()));
+        DatabaseMetaData metaData = ds.getConnection().getMetaData();
+        return ResponseEntity.ok(new DbInfo(metaData.getURL(), metaData.getUserName(), true));
     }
     @GetMapping("/getLastTransactions")
     public Collection<Transaction> getLastTxs() {
