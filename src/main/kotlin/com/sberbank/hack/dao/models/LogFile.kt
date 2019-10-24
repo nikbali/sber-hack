@@ -1,6 +1,4 @@
-package dao.models
-
-import java.time.LocalDateTime
+package com.sberbank.hack.dao.models
 
 data class LogFile (
 

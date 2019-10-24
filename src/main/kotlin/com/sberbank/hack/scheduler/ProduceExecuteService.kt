@@ -1,38 +1,27 @@
 package com.sberbank.hack.scheduler
 
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import com.sberbank.hack.dto.Transaction
-import com.sberbank.hack.filewriter.FileWrite
-import dao.Select
-import dao.models.LogFile
+import com.sberbank.hack.controllers.DatabaseScannerController
+import com.sberbank.hack.dao.Select
+import com.sberbank.hack.dao.models.LogFile
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
-import java.sql.Connection
 import java.sql.DriverManager
-import java.util.*
 import java.util.concurrent.ConcurrentLinkedQueue
-import java.util.concurrent.TimeUnit
-import java.util.concurrent.ScheduledFuture
-import org.springframework.boot.autoconfigure.kafka.KafkaProperties.Producer
+import org.springframework.core.env.Environment
+import java.sql.Connection
+import java.util.concurrent.Callable
 import java.util.concurrent.Executors
-import java.util.concurrent.ScheduledExecutorService
 
 
 @Service
 class ProduceExecuteService() {
 
+    private val log = LoggerFactory.getLogger(ProduceExecuteService::class.java)
 
-    @Value("#{spring.datasource.url}")
-    lateinit var url: String
-
-
-    @Value("#{spring.datasource.username}")
-    lateinit var username: String
-
-
-    @Value("#{spring.datasource.password}")
-    lateinit var password: String
+    @Autowired
+    lateinit var environment: Environment
 
     @Autowired
     lateinit var select: Select
@@ -42,19 +31,22 @@ class ProduceExecuteService() {
 
     fun execute() {
 
+        val connection = DriverManager.getConnection(
+                environment.getProperty("spring.datasource.url"),
+                environment.getProperty("spring.datasource.username"),
+                environment.getProperty("spring.datasource.password"))
+
         val executor = Executors.newScheduledThreadPool(1)
-
-        while (true) {
-            executor.schedule(Consumer(), 10, TimeUnit.SECONDS)
-        }
-
+        executor.submit(Consumer(connection));
     }
 
-    internal inner class Consumer : Thread() {
+    internal inner class Consumer(private val connection: Connection) : Runnable {
 
-        override fun run() {
-            val connection = DriverManager.getConnection(url, username, password)
-            logTaskQueue.addAll(select.operations(connection))
+        override fun run(){
+            while (true) {
+                logTaskQueue.addAll(select.operations(connection))
+                log.info("add Logs in Queue")
+            }
         }
     }
 

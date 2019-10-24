@@ -6,6 +6,8 @@ import com.sberbank.hack.dto.Instruction;
 import com.sberbank.hack.dto.Transaction;
 import com.sberbank.hack.filewriter.LogService;
 import com.sberbank.hack.scheduler.ProduceExecuteService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -69,7 +71,8 @@ public class DatabaseScannerController {
     }
 
     @GetMapping("/start")
-    public void start() {
+    public ResponseEntity start() {
         produceExecuteService.execute();
+        return ResponseEntity.ok().build();
     }
 }

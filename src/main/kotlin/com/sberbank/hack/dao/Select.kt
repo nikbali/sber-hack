@@ -1,15 +1,10 @@
-package dao
+package com.sberbank.hack.dao
 
-import dao.models.LogFile
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
+import com.sberbank.hack.dao.models.LogFile
 import org.springframework.stereotype.Component
-import org.springframework.stereotype.Repository
 import java.sql.Connection
 import java.sql.PreparedStatement
 import java.sql.ResultSet
-import java.util.*
-import javax.sql.DataSource
 import kotlin.collections.ArrayList
 
 @Component
