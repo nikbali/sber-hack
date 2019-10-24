@@ -13,7 +13,6 @@ export const DatabaseAPI = {
     getDatabaseInfo : () => {
         return instance.get(`getDatabaseInfo`)
             .then(response => {
-                debugger;
                 return response.data;
             });
     },
