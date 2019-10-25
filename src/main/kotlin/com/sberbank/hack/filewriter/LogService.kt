@@ -17,7 +17,7 @@ class LogService {
 
         val mapper = jacksonObjectMapper()
         val json = mapper.writeValueAsString(operation)
-        //FileWriter.writeInstruction(it.sql, tx.txId)}
+        FileWriter.writeInstruction(operation.sqlRedo ?: "", operation.xid ?: "")
         FileWriter.writeLog(json)
         buffer.add(operation)
     }
