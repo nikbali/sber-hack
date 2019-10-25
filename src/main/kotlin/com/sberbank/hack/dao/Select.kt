@@ -23,7 +23,7 @@ class Select {
                 ", a.next_time \n" +
                 "from v${'$'}archived_log a \n" +
                 "where trunc(a.first_time) = to_date(?) \n" +
-                "and DICTIONARY_BEGIN='YES'\n" +
+                "and dictionary_begin='YES' \n" +
                 "order by a.first_time desc \n" +
                 "fetch first row only"
         val preparedStatement: PreparedStatement = connect.prepareStatement(sql)
@@ -40,12 +40,13 @@ class Select {
                 0,
                 0
         )
-
     }
 
-    fun operations(connect: Connection,
-                   scn: Long,
-                   rownum: Long): Collection<Operation> {
+    fun operations(
+            connect: Connection,
+            scn: Long,
+            rownum: Long
+    ): Collection<Operation> {
 
         val sql = "select \n" +
                 "t.scn\n" +
@@ -56,12 +57,12 @@ class Select {
                 ",t.sql_undo\n" +
                 ",t.info\n" +
                 ",t.redo_value\n" +
-                " from V${'$'}LOGMNR_CONTENTS t\n" +
+                " from V${'$'}logmnr_contents t\n" +
                 " where rownum <= ?\n" +
                 " and t.scn > ?"
         val preparedStatement: PreparedStatement = connect.prepareStatement(sql)
-        preparedStatement.setLong(2, scn)
         preparedStatement.setLong(1, rownum)
+        preparedStatement.setLong(2, scn)
 
         val resultSet: ResultSet = preparedStatement.executeQuery()
 
