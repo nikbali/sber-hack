@@ -8,6 +8,7 @@ import com.sberbank.hack.filewriter.FileWriter
 import com.sberbank.hack.filewriter.LogService
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.core.env.Environment
 import org.springframework.stereotype.Service
 import java.sql.Connection
@@ -15,7 +16,6 @@ import java.sql.Date
 import java.sql.DriverManager
 import java.util.*
 import java.util.concurrent.CompletableFuture
-import java.util.concurrent.ConcurrentLinkedQueue
 import java.util.concurrent.atomic.AtomicBoolean
 
 /**
@@ -39,6 +39,12 @@ class ProduceExecuteService {
     @Autowired
     lateinit var select: Select
 
+    @Value("\${hack.chunkSize}")
+    var chunkSize: Long = 50
+
+    @Value("\${spring.datasource.username}")
+    var dbUserName: String = "sergonas"
+
     fun enable() {
         isEnableProduce.set(true);
     }
@@ -52,7 +58,7 @@ class ProduceExecuteService {
             Locale.setDefault(Locale.ENGLISH)
             val connection = DriverManager.getConnection(
                     environment.getProperty("spring.datasource.url"),
-                    environment.getProperty("spring.datasource.username"),
+                    dbUserName,
                     environment.getProperty("spring.datasource.password"))
 
             log.info("Dict build started")
@@ -69,7 +75,7 @@ class ProduceExecuteService {
         }
     }
 
-    fun doWork(conn: Connection) {
+    private fun doWork(conn: Connection) {
         var currentScn : Long = FileWriter.readCdn().cdn
 
         if(currentScn == 0L) {
@@ -80,7 +86,7 @@ class ProduceExecuteService {
         while (true) {
             if (isEnableProduce.get()) {
                 log.info("Reading mined data")
-                val operations = select.operations(conn, currentScn, 10)
+                val operations = select.operations(conn, currentScn, chunkSize)
 
                 if (operations.isNotEmpty()) {
                     val lastOperation: Operation? = getLastElement(operations)

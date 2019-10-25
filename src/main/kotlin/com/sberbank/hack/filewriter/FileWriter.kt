@@ -21,7 +21,7 @@ object FileWriter {
         if (checkSizeLimit(instructionFileName)) rotateFile(instructionFileName)
         val os = FileWriter(File(instructionFileName), true)
         val writer = BufferedWriter(os)
-        writer.append("$instruction; -- txId=$txId")
+        writer.append("$instruction --xid=$txId")
         writer.newLine()
         writer.close()
     }

@@ -4,7 +4,6 @@ data class Operation(
 
         val scn: Long = 0,
         val startScn: Long? = 0,
-        //TODO
         val startTimestamp: String? = "",
         val xid: String? = "",
         val sqlRedo: String? = "",
