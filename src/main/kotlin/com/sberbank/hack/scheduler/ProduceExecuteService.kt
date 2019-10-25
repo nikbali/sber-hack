@@ -1,5 +1,6 @@
 package com.sberbank.hack.scheduler
 
+import com.sberbank.hack.dao.PreparationSelect
 import com.sberbank.hack.dao.Select
 import com.sberbank.hack.dao.models.Operation
 import org.slf4j.LoggerFactory
@@ -7,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.core.env.Environment
 import org.springframework.stereotype.Service
 import java.sql.Connection
+import java.sql.Date
 import java.sql.DriverManager
 import java.util.concurrent.ConcurrentLinkedQueue
 import java.util.concurrent.Executors
@@ -48,29 +50,29 @@ class ProduceExecuteService {
                 environment.getProperty("spring.datasource.url"),
                 environment.getProperty("spring.datasource.username"),
                 environment.getProperty("spring.datasource.password"))
-
+        PreparationSelect.build(connection)
+        val logFiles = select.logFiles(connection, Date(System.currentTimeMillis() - 100000))
+        val scn = select.initialSCN(connection)
+        PreparationSelect.addLogFile(connection, logFiles.name)
+        PreparationSelect.startLogMnr(connection)
         producer.submit(Producer(connection))
         consumer.submit(Consumer(connection))
     }
 
-    internal inner class Producer(private val connection: Connection) : Runnable {
+    internal inner class Producer(private val connection: Connection, var currentScn: Long = 0) : Runnable {
 
         override fun run() {
-
-            var currentScn: Long = 0
-
             while (true) {
                 if (isEnableProduce.get()) {
 
                     val operations = select.operations(connection, currentScn, 10)
 
                     if (operations.isNotEmpty()) {
-                        val lastOperation: Operation? = getLastElement(operations)
+                        val lastOperation: Operation? = operations.stream().sorted{a, b -> b.scn.compareTo(a.scn)}.findFirst().get()
                         currentScn = lastOperation?.scn ?: currentScn
                         logTaskQueue.addAll(operations)
                         log.info("add Logs in Queue")
                     }
-
                 }
             }
         }
@@ -93,10 +95,10 @@ class ProduceExecuteService {
 
                     if (!logTaskQueue.isEmpty()) {
                         val operation: Operation = logTaskQueue.poll()
+                        log.info(operation.toString())
                         log.info("Write to file" + operation.xid)
                     }
                 }
-
             }
         }
     }
@@ -110,5 +112,4 @@ class ProduceExecuteService {
 
         return lastElement
     }
-
 }
