@@ -59,8 +59,8 @@ class Select {
                 " where rownum <= ?\n" +
                 " and t.scn > ?"
         val preparedStatement: PreparedStatement = connect.prepareStatement(sql)
-        preparedStatement.setLong(1, scn)
-        preparedStatement.setLong(2, rownum)
+        preparedStatement.setLong(2, scn)
+        preparedStatement.setLong(1, rownum)
 
         val resultSet: ResultSet = preparedStatement.executeQuery()
 
