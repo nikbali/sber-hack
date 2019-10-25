@@ -90,6 +90,9 @@ class ProduceExecuteService {
                         currentScn = lastOperation?.scn ?: currentScn
                         logTaskQueue.addAll(operations)
                         log.info("add Logs in Queue")
+                    } else {
+                        log.info("data empty")
+                        Thread.sleep(1000)
                     }
 
                 } else {

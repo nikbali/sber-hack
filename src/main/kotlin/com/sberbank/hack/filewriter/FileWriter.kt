@@ -2,16 +2,12 @@ package com.sberbank.hack.filewriter
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.sberbank.hack.dto.CdnDto
-import org.json.simple.parser.JSONParser
 import java.io.*
 import java.io.FileWriter
 import java.nio.file.Files
 import java.nio.file.Paths
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
-import java.util.stream.Collectors
-import java.io.FileReader
-
 
 
 object FileWriter {
@@ -20,7 +16,7 @@ object FileWriter {
     private const val instructionFileName = "rpl.sql"
     private val dateFormatter = DateTimeFormatter.ofPattern("yy-MM-dd_HH-mm-ss")
 
-    fun writeInstruction(instruction: String, txId: Long) {
+    fun writeInstruction(instruction: String, txId: String) {
         val instructionFileName = logFolderName + instructionFileName
         if (checkSizeLimit(instructionFileName)) rotateFile(instructionFileName)
         val os = FileWriter(File(instructionFileName), true)
