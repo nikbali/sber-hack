@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service
 import java.sql.Connection
 import java.sql.Date
 import java.sql.DriverManager
+import java.util.*
 import java.util.concurrent.ConcurrentLinkedQueue
 import java.util.concurrent.Executors
 import java.util.concurrent.atomic.AtomicBoolean
@@ -44,6 +45,7 @@ class ProduceExecuteService {
     }
 
     fun execute() {
+        Locale.setDefault(Locale.ENGLISH)
         val producer = Executors.newScheduledThreadPool(1)
         val consumer = Executors.newScheduledThreadPool(1)
         val connection = DriverManager.getConnection(
@@ -52,7 +54,7 @@ class ProduceExecuteService {
                 environment.getProperty("spring.datasource.password"))
         PreparationSelect.build(connection)
         val logFiles = select.logFiles(connection, Date(System.currentTimeMillis() - 100000))
-        val scn = select.initialSCN(connection)
+//        val scn = select.initialSCN(connection)
         PreparationSelect.addLogFile(connection, logFiles.name)
         PreparationSelect.startLogMnr(connection)
         producer.submit(Producer(connection))
