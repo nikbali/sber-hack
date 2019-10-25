@@ -2,7 +2,7 @@ import * as axios from "axios";
 
 const instance = axios.create({
     baseURL: 'http://172.30.13.86:8082/',
-    timeout: 10000,
+    timeout: 50000,
     headers:     {
     }
 });
@@ -33,6 +33,13 @@ export const DatabaseAPI = {
 
     end : () => {
         return instance.get(`end`)
+            .then(response => {
+                return response.data;
+            });
+    },
+
+    download : () => {
+        return instance.get(`download`)
             .then(response => {
                 return response.data;
             });

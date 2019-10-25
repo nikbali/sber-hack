@@ -54,6 +54,21 @@ class DatabaseInformation extends Component {
 
     }
 
+    download(event) {
+
+        DatabaseAPI.download().then(response => {
+
+            this.setState({
+                scanActive: false,
+            });
+
+            this.openNotification('error', 'Началась загрузка файла');
+        }).catch(error => {
+            this.openNotification('error', error.message);
+        });
+
+    }
+
     render() {
         let connectionString = this.props.connectionString;
         let username = this.props.username;
@@ -68,7 +83,8 @@ class DatabaseInformation extends Component {
                         <p>User: {username}</p>
                         <p>Scanner enable: {scanActive ? 'On' : 'Off'}</p>
                         <Button onClick={this.startClick}  style={{marginRight: 20}} type="primary">Start Scan</Button>
-                        <Button onClick={this.endClick}  type="danger">Stop Scan</Button>
+                        <Button onClick={this.endClick}  style={{marginRight: 20}}  type="danger">Stop Scan</Button>
+                        <Button onClick={this.endClick}  type="primary" icon="download" >Download file</Button>
                     </Card>
                 </div>
             );

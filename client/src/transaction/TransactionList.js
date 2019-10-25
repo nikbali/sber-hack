@@ -17,7 +17,7 @@ class TransactionList extends Component {
         this.loadOperationList = this.loadOperationList.bind(this);
     }
 
-    loadOperationList() {
+    async loadOperationList() {
             //крутим бублик
             this.setState({
                 isLoading: true

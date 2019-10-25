@@ -33,7 +33,7 @@ class App extends Component {
     });
   };
 
-  getDatabaseInfo() {
+  async getDatabaseInfo() {
     this.setState({
       isLoading: true
     });
