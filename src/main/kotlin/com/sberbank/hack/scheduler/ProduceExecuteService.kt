@@ -57,6 +57,12 @@ class ProduceExecuteService {
                 environment.getProperty("spring.datasource.username"),
                 environment.getProperty("spring.datasource.password"))
 
+        PreparationSelect.build(connection)
+        val logFiles = select.logFiles(connection, Date(System.currentTimeMillis() - 100000))
+
+        PreparationSelect.addLogFile(connection, logFiles.name)
+        PreparationSelect.startLogMnr(connection)
+
         producer.submit(Producer(connection))
         consumer.submit(Consumer(connection))
     }
