@@ -20,11 +20,11 @@ public class LogServiceTest {
     public void testInstructionLogging() {
         Instruction first = new Instruction("select sysdate from dual", "", Instant.now());
         Transaction tx1 = new Transaction(1, Collections.singletonList(first));
-        logService.log(tx1);
+        //logService.log(tx1);
         Instruction second = new Instruction("select some from dual", "", Instant.now());
         Instruction third = new Instruction("select data from dual", "", Instant.now());
         Transaction tx2 = new Transaction(2, Arrays.asList(second, third));
-        logService.log(tx2);
+        //logService.log(tx2);
     }
 
     public void logServiceLoadTest() {

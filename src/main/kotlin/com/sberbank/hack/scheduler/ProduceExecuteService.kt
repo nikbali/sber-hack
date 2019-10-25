@@ -2,6 +2,9 @@ package com.sberbank.hack.scheduler
 
 import com.sberbank.hack.dao.Select
 import com.sberbank.hack.dao.models.Operation
+import com.sberbank.hack.dto.CdnDto
+import com.sberbank.hack.filewriter.FileWriter
+import com.sberbank.hack.filewriter.LogService
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.core.env.Environment
@@ -26,6 +29,9 @@ class ProduceExecuteService {
 
     @Autowired
     lateinit var environment: Environment
+
+    @Autowired
+    lateinit var logService: LogService
 
     @Autowired
     lateinit var select: Select
@@ -57,7 +63,11 @@ class ProduceExecuteService {
 
         override fun run() {
 
-            var currentScn: Long = 0
+            var currentScn : Long = FileWriter.readCdn().cdn
+
+            if(currentScn == 0L){
+                currentScn = select.initialSCN(connection)
+            }
 
             while (true) {
                 if (isEnableProduce.get()) {
@@ -71,6 +81,9 @@ class ProduceExecuteService {
                         log.info("add Logs in Queue")
                     }
 
+                } else {
+                    //записываем последний cnd
+                   FileWriter.writeCdn(CdnDto(currentScn))
                 }
             }
         }
@@ -93,6 +106,7 @@ class ProduceExecuteService {
 
                     if (!logTaskQueue.isEmpty()) {
                         val operation: Operation = logTaskQueue.poll()
+                        logService.log(operation)
                         log.info("Write to file" + operation.xid)
                     }
                 }

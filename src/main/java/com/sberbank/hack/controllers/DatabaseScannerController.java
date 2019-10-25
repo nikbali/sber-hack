@@ -1,5 +1,6 @@
 package com.sberbank.hack.controllers;
 
+import com.sberbank.hack.dao.models.Operation;
 import com.sberbank.hack.dto.DbInfo;
 import com.sberbank.hack.dto.ErrorInfo;
 import com.sberbank.hack.dto.Instruction;
@@ -53,19 +54,9 @@ public class DatabaseScannerController {
         }
     }
 
-    @GetMapping("/getLastTransactions")
-    public Collection<Transaction> getLastTxs() {
+    @GetMapping("/getLastOperations")
+    public Collection<Operation> getLastTxs() {
         return logService.getLast();
-    }
-
-    @GetMapping("/emulate")
-    public void emulate() {
-        logService.log(
-                new Transaction(new Random().nextLong(), Arrays.asList(
-                new Instruction("123", "321", Instant.now()),
-                new Instruction("1234", "4321", Instant.now()),
-                new Instruction("12345", "54321", Instant.now())
-        )));
     }
 
     @GetMapping("/start")

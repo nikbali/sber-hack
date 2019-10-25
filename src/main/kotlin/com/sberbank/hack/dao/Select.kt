@@ -89,7 +89,6 @@ class Select {
         val sql = "select v.current_scn from v\$database v"
         val preparedStatement: PreparedStatement = connect.prepareStatement(sql)
         val resultSet: ResultSet = preparedStatement.executeQuery()
-
         return resultSet.getLong("CURRENT_SCN")
     }
 }
