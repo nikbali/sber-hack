@@ -72,7 +72,7 @@ class DatabaseInformation extends Component {
     render() {
         let connectionString = this.props.connectionString;
         let username = this.props.username;
-        let scanActive = this.props.scanActive;
+        let scanActive = this.state.scanActive;
 
         if (connectionString) {
             debugger;
@@ -84,7 +84,7 @@ class DatabaseInformation extends Component {
                         <p>Scanner enable: {scanActive ? 'On' : 'Off'}</p>
                         <Button onClick={this.startClick}  style={{marginRight: 20}} type="primary">Start Scan</Button>
                         <Button onClick={this.endClick}  style={{marginRight: 20}}  type="danger">Stop Scan</Button>
-                        <Button onClick={this.endClick}  type="primary" icon="download" >Download file</Button>
+                        <Button onClick={this.download}  type="primary" icon="download" >Download file</Button>
                     </Card>
                 </div>
             );
