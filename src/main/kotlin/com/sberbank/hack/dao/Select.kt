@@ -13,31 +13,31 @@ import kotlin.collections.ArrayList
 class Select {
     fun logFiles(connect: Connection,
                  logDate : Date): LogFile {
-        val sql: String = "select\n" +
-                "a.recid\n" +
-                ",a.stamp\n" +
-                ",a.name\n" +
-                ",a.first_change#\n" +
-                ",a.next_change#\n" +
-                ",a.first_time\n" +
-                ",a.next_time" +
+        val sql: String = "select \n" +
+                "a.recid \n" +
+                ", a.stamp \n" +
+                ", a.name \n" +
+                ", a.first_change# \n" +
+                ", a.next_change# \n" +
+                ", a.first_time \n" +
+                ", a.next_time \n" +
                 "from v${'$'}archived_log a \n" +
-                "where trunc(a.first_time) = to_date(?)\n" +
-                "order by a.first_time desc" +
-                "fetch first row only\n"
+                "where trunc(a.first_time) = to_date(?) \n" +
+                "order by a.first_time desc \n" +
+                "fetch first row only"
         val preparedStatement: PreparedStatement = connect.prepareStatement(sql)
         preparedStatement.setDate(1, logDate)
 
         val resultSet: ResultSet = preparedStatement.executeQuery()
-
+        resultSet.next()
         return LogFile(
                 resultSet.getLong("RECID"),
                 resultSet.getLong("STAMP"),
                 resultSet.getString("NAME"),
                 resultSet.getLong("FIRST_CHANGE#"),
                 resultSet.getLong("NEXT_CHANGE#"),
-                resultSet.getLong("FIRST_TIME"),
-                resultSet.getLong("NEXT_TIME")
+                0,
+                0
         )
 
     }
@@ -55,12 +55,9 @@ class Select {
                 ",t.sql_undo\n" +
                 ",t.info\n" +
                 ",t.redo_value\n" +
-                ",t.xid\n" +
-                " from data_lgmr t\n" +
-                //TODO V$LOGMNR_CONTENTS
+                " from V${'$'}LOGMNR_CONTENTS t\n" +
                 " where rownum <= ?\n" +
-                "and t.scn > ?\n"+
-                "order by t.scn desc"
+                " and t.scn > ?"
         val preparedStatement: PreparedStatement = connect.prepareStatement(sql)
         preparedStatement.setLong(1, scn)
         preparedStatement.setLong(2, rownum)
@@ -77,8 +74,7 @@ class Select {
                     resultSet.getString("XID"),
                     resultSet.getString("SQL_REDO"),
                     resultSet.getString("SQL_UNDO"),
-                    resultSet.getString("REDO_VALUE"),
-                    resultSet.getString("XID")
+                    resultSet.getString("REDO_VALUE")
             ))
         }
         return operationList
@@ -89,6 +85,8 @@ class Select {
         val sql = "select v.current_scn from v\$database v"
         val preparedStatement: PreparedStatement = connect.prepareStatement(sql)
         val resultSet: ResultSet = preparedStatement.executeQuery()
+
+        resultSet.next()
         return resultSet.getLong("CURRENT_SCN")
     }
 }

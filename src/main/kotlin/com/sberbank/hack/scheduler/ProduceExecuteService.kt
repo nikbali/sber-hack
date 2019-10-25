@@ -1,5 +1,6 @@
 package com.sberbank.hack.scheduler
 
+import com.sberbank.hack.dao.PreparationSelect
 import com.sberbank.hack.dao.Select
 import com.sberbank.hack.dao.models.Operation
 import com.sberbank.hack.dto.CdnDto
@@ -10,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.core.env.Environment
 import org.springframework.stereotype.Service
 import java.sql.Connection
+import java.sql.Date
 import java.sql.DriverManager
 import java.util.concurrent.ConcurrentLinkedQueue
 import java.util.concurrent.Executors
@@ -106,11 +108,11 @@ class ProduceExecuteService {
 
                     if (!logTaskQueue.isEmpty()) {
                         val operation: Operation = logTaskQueue.poll()
+                        log.info(operation.toString())
                         logService.log(operation)
                         log.info("Write to file" + operation.xid)
                     }
                 }
-
             }
         }
     }
@@ -124,5 +126,4 @@ class ProduceExecuteService {
 
         return lastElement
     }
-
 }
