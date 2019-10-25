@@ -13,22 +13,23 @@ class TransactionList extends Component {
             isLoading: false,
         };
         this._isMounted = false;
+
+        this.loadOperationList = this.loadOperationList.bind(this);
     }
 
-    loadTransactionList() {
+    loadOperationList() {
             //крутим бублик
             this.setState({
                 isLoading: true
             });
 
-            DatabaseAPI.getLastTransactions().then(response => {
+            DatabaseAPI.getLastOperations().then(response => {
 
                 if(this._isMounted){
 
                     this.setState({
                         transactions: response,
                         isLoading: false
-
                     });
                 }
 
@@ -38,14 +39,14 @@ class TransactionList extends Component {
                     isLoading: false
                 });
 
-                this.openNotification('error', error.message);
+                //this.openNotification('error', error.message);
             });
         }
 
 
     componentDidMount() {
         this._isMounted = true;
-        this.loadTransactionList();
+        this.loadOperationList();
     }
 
     componentWillUnmount() {
@@ -55,9 +56,10 @@ class TransactionList extends Component {
 
     render() {
 
-        let testData = this.state.transactions;
+        let data = this.state.transactions;
+
         debugger;
-        if (testData === undefined || testData.length === 0) {
+        if (data === undefined || data.length === 0) {
 
             return (
                 <div className="transaction-container">
@@ -72,37 +74,16 @@ class TransactionList extends Component {
                 <div className="transaction-container">
 
                     {
-                        testData.map(transaction => {
+                        data.map(transaction => {
                             return (
-                                <Card title={'Transaction Id: ' + transaction.txId}>
-                                    <p
-                                        style={{
-                                            fontSize: 14,
-                                            color: 'rgba(0, 0, 0, 0.85)',
-                                            marginBottom: 10,
-                                            fontWeight: 500,
-                                        }}
-                                    >
-                                        List instructions:
-                                    </p>
+                                <Card type="inner"
+                                      title={'Id транзакции: ' + transaction.xid}
+                                      style={{marginBottom: 5,}}>
 
-                                    {
-                                        transaction.instructions.map(instruction => {
-                                            return (
-                                                <Card type="inner"
-                                                      title={instruction.ts}
-
-                                                      style={{
-                                                          marginBottom: 5,
-                                                      }}
-                                                >
-                                                    <p>SQL: {instruction.sql}</p>
-                                                    <p>Undo SQL: {instruction.undoSql}</p>
-                                                </Card>
-                                            );
-                                        })
-                                    }
-
+                                    <p>Start Timestamp: {transaction.startTimestamp}</p>
+                                    <p>SQL: {transaction.sqlRedo}</p>
+                                    <p>Undo SQL: {transaction.sql_Undo}</p>
+                                    <p>Info: {transaction.info}</p>
                                 </Card>
                             )
                         })

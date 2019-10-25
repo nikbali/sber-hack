@@ -17,10 +17,23 @@ export const DatabaseAPI = {
             });
     },
 
-    getLastTransactions : () => {
-        return instance.get(`getLastTransactions`)
+    getLastOperations : () => {
+        return instance.get(`getLastOperations`)
             .then(response => {
-                debugger;
+                return response.data;
+            });
+    },
+
+    start : () => {
+        return instance.get(`start`)
+            .then(response => {
+                return response.data;
+            });
+    },
+
+    end : () => {
+        return instance.get(`end`)
+            .then(response => {
                 return response.data;
             });
     }
